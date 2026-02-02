@@ -34,14 +34,20 @@ space=${HF_REPO#*/}
 N8N_HOST="${owner}-${space}.hf.space"
 
 notify() {
-    if [ -z "$TG_TOKEN" ]; then
-        exit 0
+    # --- Telegram 通道 ---
+    if [ ! -z "$TG_TOKEN" ]; then
+        curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"chat_id\": \"$TG_CHAT_ID\", \"text\": \"🚨 警告：检测到服务异常，正在触发重启。\n目标空间: https://huggingface.co/spaces/$HF_REPO\", \"disable_notification\": false}" \
+            "https://api.telegram.org/bot$TG_TOKEN/sendMessage"
     fi
-    curl -X POST \
-        -H "Content-Type: application/json" \
-        -d "{\"chat_id\": \"$TG_CHAT_ID\", \"text\": \"n8n rebuilding https://huggingface.co/spaces/$HF_REPO/settings\", \"disable_notification\": false}" \
-        "https://api.telegram.org/bot$TG_TOKEN/sendMessage"
 
+    # --- Bark 通道 ---
+    if [ ! -z "$BARK_KEY" ]; then
+        curl -s \
+            "https://api.day.app/$BARK_KEY/N8n报警/🚨检测到服务异常，正在触发重启-$HF_REPO" \
+            > /dev/null
+    fi
 }
 
 rebuild() {
