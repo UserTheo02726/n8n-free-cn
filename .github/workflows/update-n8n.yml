@@ -1,4 +1,4 @@
-name: Auto Update Chinese Version (Restart Space)
+name: Check for n8n Updates and Sync to Hugging Face Space
 
 on:
   schedule:
