@@ -1,6 +1,9 @@
 name: Push to huggingface
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:        # 支持手动触发
   workflow_call:            # 支持被其他 Workflow 调用
 
