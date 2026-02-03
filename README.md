@@ -1,13 +1,32 @@
 ---
 title: N8n Free
 emoji: ⚡
-colorFrom: blue
-colorTo: gray
+colorFrom: pink
+colorTo: yellow
 sdk: docker
 pinned: false
 license: mit
-short_description: n8n on Hugging Face Spaces with Supabase
+short_description: n8n free hosted with supebase
 ---
+
+### Key Changes
+
+1.  **Dockerfile**:
+    *   **Original**: `docker.n8n.io/n8nio/n8n`
+    *   **Modified**: `blowsnow/n8n-chinese:latest`
+    *   **Reason**: To provide a Chinese user interface.
+
+2.  **Update Workflow (`update-n8n.yml`)**:
+    *   **Original**: Checks for new tags and commits changes to Dockerfile.
+    *   **Modified**: Triggers a Factory Reboot via Hugging Face API every Friday.
+    *   **Reason**: The community image uses the `latest` tag. A factory reboot ensures the latest version of this tag is pulled.
+
+3.  **Environment Variables**:
+    *   **Added**: `N8N_DEFAULT_LOCALE: zh-CN` (Sets default language to Chinese).
+    *   **Added**: `N8N_REINSTALL_MISSING_PACKAGES: true` (Ensures missing nodes are reinstalled).
+    *   **Modified**: `DB_TYPE` changed from `postgres` to `postgresdb` (**Critical**: prevents data loss).
+    *   **Modified**: `GENERIC_TIMEZONE` and `TZ` changed from placeholder to `Asia/Shanghai`.
+    *   **Refactored**: Merged "Optional execution retention settings" table into the main table and moved it up for better visibility.
 
 # N8n Free
 
@@ -75,7 +94,7 @@ Add these as **Variables** in the Space settings:
 
 | Variable | Value |
 | --- | --- |
-| `DB_TYPE` | `postgres` |
+| `DB_TYPE` | `postgresdb` |
 | `DB_POSTGRESDB_SCHEMA` | `public` |
 | `N8N_PORT` | `7860` |
 | `N8N_PROTOCOL` | `https` |
@@ -86,19 +105,18 @@ Add these as **Variables** in the Space settings:
 | `N8N_PUSH_BACKEND` | `websocket` |
 | `N8N_DATABASE_SSL_REJECT_UNAUTHORIZED` | `true` |
 | `N8N_PROXY_HOPS` | `1` |
-| `GENERIC_TIMEZONE` | Your timezone (optional) |
-| `TZ` | Your timezone (optional) |
-
-Optional execution retention settings:
-
-| Variable | Value |
-| --- | --- |
-| `EXECUTIONS_DATA_SAVE_ON_PROGRESS` | `false` |
-| `EXECUTIONS_DATA_SAVE_ON_ERROR` | `all` |
-| `EXECUTIONS_DATA_SAVE_ON_SUCCESS` | `none` |
-| `EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS` | `false` |
+| `N8N_REINSTALL_MISSING_PACKAGES` | `true` |
+| `N8N_DEFAULT_LOCALE` | `zh-CN` |
 | `EXECUTIONS_DATA_PRUNE` | `true` |
 | `EXECUTIONS_DATA_MAX_AGE` | `168` |
+| `EXECUTIONS_DATA_SAVE_ON_SUCCESS` | `none` |
+| `EXECUTIONS_DATA_SAVE_ON_ERROR` | `all` |
+| `EXECUTIONS_DATA_SAVE_ON_PROGRESS` | `false` |
+| `EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS` | `false` |
+| `GENERIC_TIMEZONE` | `Asia/Shanghai` |
+| `TZ` | `Asia/Shanghai` |
+
+
 
 ### 6. Configure GitHub Actions secrets and variables
 
@@ -184,3 +202,8 @@ an in-app workflow for keep-alive and update triggers.
 ## Security notes
 
 Do not commit secrets. Use Hugging Face Space secrets and GitHub Actions secrets.
+
+## Modifications for Chinese Support (set chinese image description)
+
+This repository has been modified to support the Chinese community version of n8n.
+
