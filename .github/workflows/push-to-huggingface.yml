@@ -16,6 +16,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          # Key correction: Force pull the latest main branch, including the modifications from the previous stage.
+          ref: main
           # Fetch all history to solve the "shallow update not allowed" error
           fetch-depth: 0
       - name: Push to Hugging Face Space
