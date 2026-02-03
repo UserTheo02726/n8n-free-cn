@@ -1,5 +1,5 @@
 ---
-title: N8n Free
+title: n8n automation
 emoji: ⚡
 colorFrom: pink
 colorTo: yellow
