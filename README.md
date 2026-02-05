@@ -9,24 +9,6 @@ license: mit
 short_description: n8n free hosted with supebase
 ---
 
-### Key Changes
-
-1.  **Dockerfile**:
-    *   **Original**: `docker.n8n.io/n8nio/n8n`
-    *   **Modified**: `blowsnow/n8n-chinese:latest`
-    *   **Reason**: To provide a Chinese user interface.
-
-2.  **Update Workflow (`update-n8n.yml`)**:
-    *   **Original**: Checks for new tags and commits changes to Dockerfile.
-    *   **Modified**: Triggers a Factory Reboot via Hugging Face API every Friday.
-    *   **Reason**: The community image uses the `latest` tag. A factory reboot ensures the latest version of this tag is pulled.
-
-3.  **Environment Variables**:
-    *   **Added**: `N8N_DEFAULT_LOCALE: zh-CN` (Sets default language to Chinese).
-    *   **Added**: `N8N_REINSTALL_MISSING_PACKAGES: true` (Ensures missing nodes are reinstalled).
-    *   **Modified**: `DB_TYPE` changed from `postgres` to `postgresdb` (**Critical**: prevents data loss).
-    *   **Modified**: `GENERIC_TIMEZONE` and `TZ` changed from placeholder to `Asia/Shanghai`.
-    *   **Refactored**: Merged "Optional execution retention settings" table into the main table and moved it up for better visibility.
 
 # N8n Free
 
@@ -207,3 +189,75 @@ Do not commit secrets. Use Hugging Face Space secrets and GitHub Actions secrets
 
 This repository has been modified to support the Chinese community version of n8n.
 
+### Key Changes from Original
+
+1.  **Dockerfile**: Uses `blowsnow/n8n-chinese:latest` for Chinese UI.
+2.  **Update Workflow**: Triggers weekly Factory Reboot via API to pull the latest image.
+3.  **Environment**:
+    *   Set `N8N_DEFAULT_LOCALE: zh-CN`.
+    *   Set `N8N_REINSTALL_MISSING_PACKAGES: true`.
+    *   Changed `DB_TYPE` to `postgresdb` (critical for data safety).
+    *   Set Timezone to `Asia/Shanghai`.
+
+## Features
+
+*   **Ready-to-Deploy**: One-click Hugging Face Space setup.
+*   **Localized**: Integrated Chinese interface.
+*   **Tool-Rich**: Includes Python3, Chromium, FFmpeg, yt-dlp.
+*   **Persistent**: Supabase (PostgreSQL) backend.
+*   **Auto-Updating**: Weekly sync with upstream.
+
+---
+
+## 🛠️ Docker Build
+
+The multi-stage `Dockerfile` is efficient:
+
+1.  **Localization**: Extracts UI files from `blowsnow/n8n-chinese`.
+2.  **Deps**: Installs Python3, Chromium, FFmpeg, yt-dlp on `node:24-alpine`.
+3.  **Core**: Installs n8n via npm.
+4.  **Merge**: Overlays localization files.
+5.  **Security**: Runs as non-root `node` user.
+
+---
+
+## 🔄 Hugging Face Space Setup
+
+Configure these in **Settings**.
+
+### 1. Variables
+
+> **Note**: Replace `<username>` and `<space-name>`.
+
+| No. | Variable | Value | Description |
+| :--- | :--- | :--- | :--- |
+| **1** | `N8N_EDITOR_BASE_URL` | `https://<username>-<space-name>.hf.space` | Browser URL |
+| **2** | `WEBHOOK_URL` | `https://<username>-<space-name>.hf.space` | Webhook URL |
+| **3** | `N8N_HOST` | `<username>-<space-name>.hf.space` | Domain (no protocol) |
+| **4** | `N8N_DATABASE_SSL_REJECT_UNAUTHORIZED` | `true` | Strict SSL (requires CA cert) |
+| 5 | `GENERIC_TIMEZONE` | `Asia/Shanghai` | Business Timezone |
+| 6 | `TZ` | `Asia/Shanghai` | System Timezone |
+| 7 | `N8N_DEFAULT_LOCALE` | `zh-CN` | Language (Simplified Chinese) |
+| 8 | `DB_POSTGRESDB_SCHEMA` | `public` | DB Schema |
+| 9 | `EXECUTIONS_DATA_PRUNE` | `true` | Auto-cleanup history |
+| 10 | `EXECUTIONS_DATA_MAX_AGE` | `168` | Retention hours (7 days) |
+| 11 | `EXECUTIONS_DATA_SAVE_ON_ERROR` | `all` | Save failed executions |
+| 12 | `EXECUTIONS_DATA_SAVE_ON_SUCCESS` | `none` | Discard successful executions |
+| 13 | `EXECUTIONS_DATA_SAVE_ON_PROGRESS` | `false` | Discard progress |
+| 14 | `EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS` | `false` | Discard manual test records |
+
+> **Pre-configured**: `N8N_PORT` (7860), `N8N_PROXY_HOPS` (1), `N8N_REINSTALL_MISSING_PACKAGES` (true), `N8N_PROTOCOL` (https), `DB_TYPE` (postgresdb), `N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS` (true), `N8N_PUSH_BACKEND` (websocket).
+
+### 2. Secrets
+
+> **Note**: Values are hidden after saving.
+
+| Secret | Value | Description |
+| :--- | :--- | :--- |
+| `DB_POSTGRESDB_HOST` | `aws-0-ap-xxxxx.pooler.supabase.com` | Supabase Host |
+| `DB_POSTGRESDB_PORT` | `6543` | Port (Pooler: 6543) |
+| `DB_POSTGRESDB_DATABASE` | `postgres` | DB Name |
+| `DB_POSTGRESDB_USER` | `postgres.xxxxx` | DB User |
+| `DB_POSTGRESDB_PASSWORD` | `<password>` | DB Password |
+| `N8N_ENCRYPTION_KEY` | `<random string>` | Credential encryption key |
+| `DB_POSTGRESDB_SSL_CA` | `-----BEGIN CERTIFICATE----- ...` | Supabase Root Cert (DigiCert) |
