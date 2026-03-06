@@ -2,7 +2,7 @@
 # Stage 1: Fetch Chinese localization package
 # ==========================================
 # 👇 Initially set to latest; script will auto-replace with exact version (e.g., 2.11.0)
-FROM blowsnow/n8n-chinese:2.9.4 AS builder
+FROM blowsnow/n8n-chinese:2.10.4 AS builder
 
 # ==========================================
 # Stage 2: Build runtime environment (Alpine)
@@ -53,7 +53,7 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true \
 
 # 2. Install n8n
 # 👇 Initially set to latest; script also watches here to align with above
-RUN npm install -g n8n@2.9.4
+RUN npm install -g n8n@2.10.4
 
 # 3. Inject Chinese localization package
 COPY --from=builder /usr/local/lib/node_modules/n8n/node_modules/n8n-editor-ui/dist /usr/local/lib/node_modules/n8n/node_modules/n8n-editor-ui/dist
